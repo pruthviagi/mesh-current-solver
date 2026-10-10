@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mesh Current Solver</title>
+  <meta name="description" content="Enter a circuit with two or three meshes and get each KVL equation with the reason for every sign, then the mesh currents. Runs a Python program in your browser.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+  <link rel="stylesheet" href="style.css">
+  <script defer src="https://cdn.jsdelivr.net/pyodide/v314.0.7/full/pyodide.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <div class="page">
+    <header class="top">
+      <div class="top-text">
+        <h1>Mesh current solver</h1>
+        <p class="lead">Describe a circuit with two or three meshes. The program writes the voltage equation for each mesh with a reason for every sign, then solves for the currents.</p>
+      </div>
+      <div class="top-side">
+        <p id="py-status" class="status" data-state="loading" role="status">Loading Python</p>
+        <a class="plain-link" href="mesh_solver_general.py" download>Download the Python program</a>
+      </div>
+    </header>
+
+    <noscript><p class="banner error">This page needs JavaScript to run the Python program.</p></noscript>
+
+    <main class="layout">
+      <section class="build" aria-labelledby="build-h">
+        <div class="section-head">
+          <h2 id="build-h">Your circuit</h2>
+          <button type="button" id="copy-link" class="btn quiet">Copy link to this circuit</button>
+        </div>
+
+        <div class="examples" role="group" aria-label="Examples">
+          <span class="examples-label">Examples</span>
+          <button type="button" class="btn quiet" data-preset="worksheet">Worksheet circuit</button>
+          <button type="button" class="btn quiet" data-preset="flipped">Flip the I<sub>2</sub> arrow</button>
+          <button type="button" class="btn quiet" data-preset="three">Three meshes</button>
+          <button type="button" class="btn quiet" data-preset="blank">Clear</button>
+        </div>
+
+        <div id="glance" class="glance" aria-hidden="true"></div>
+        <div id="builder"></div>
+      </section>
+
+      <section class="results" aria-labelledby="res-h">
+        <div class="section-head">
+          <h2 id="res-h">Results</h2>
+          <button type="button" id="copy-report" class="btn quiet" disabled>Copy as text</button>
+        </div>
+        <p id="live" class="sr-only" aria-live="polite"></p>
+        <div id="results"></div>
+      </section>
+    </main>
+
+    <section class="notes" aria-labelledby="help-h">
+      <h2 id="help-h">How to describe your drawing</h2>
+      <div class="notes-grid">
+        <div class="note-block">
+          <p>Treat every mesh as a rectangle with a top, bottom, left and right side. A branch is a stretch of wire between two junctions that holds resistors or batteries. Plain wires can be left out.</p>
+          <p>A branch on the outside of the circuit borders one mesh. Choose the side of that mesh it sits on. A branch between two meshes is shared: choose both meshes and give its side for the lower-numbered one. The page works out the side for the other.</p>
+          <p>A battery on a left or right side is upright, so its + plate is at the top or the bottom. A battery on a top or bottom side is sideways, so its + plate is at the left or the right. Use one set of units. Ohms and volts give amps.</p>
+        </div>
+        <div class="note-block">
+          <p>The page walks round each mesh the way its arrow turns and adds up the voltage changes.</p>
+          <ul class="plain">
+            <li>Going from the &minus; plate to the + plate of a battery is a rise, written +V. Going from + to &minus; is a drop, written &minus;V.</li>
+            <li>A resistor is always a drop: &minus;R times the current along your walk.</li>
+            <li>In a shared resistor, the neighbouring mesh current adds to yours when it runs the same way you walk, and subtracts when it runs against you.</li>
+          </ul>
+        </div>
+      </div>
+      <p class="figure-label">The worksheet circuit with its branches numbered, as loaded by the first example. Both arrows turn clockwise and both batteries have + at the top.</p>
+      <pre class="sketch" aria-label="Sketch of the worksheet circuit">
+          Branch 2: 20 Ω             Branch 4: 40 Ω
+     +-------/\/\/\-------+-------/\/\/\-------+
+     |                    |                    |
+  Branch 1             Branch 3             Branch 5
+  100 V (+ top)           60 Ω              50 V (+ top)
+     |     I1 (cw)        |      I2 (cw)       |
+     +--------------------+--------------------+</pre>
+    </section>
+
+    <section class="source" aria-labelledby="src-h">
+      <details>
+        <summary id="src-h">The Python program this page runs</summary>
+        <p class="small">This is <code>mesh_solver_general.py</code>, loaded from the same folder as this page. The page sends it your circuit and draws what it sends back. The same file also runs in a terminal.</p>
+        <pre class="code"><code id="source-code">Loading the program</code></pre>
+      </details>
+    </section>
+
+    <footer class="foot">
+      <p>Everything runs in your browser. Your circuit is not sent anywhere. Python runs through <a href="https://pyodide.org">Pyodide</a>.</p>
+    </footer>
+  </div>
+</body>
+</html>
